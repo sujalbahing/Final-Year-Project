@@ -1,27 +1,32 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
-from django.contrib.auth.hashers import make_password
+from krishi.models import User
 
-# class UserSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ['id', 'name', 'email', 'password']
+
+class UserRegistrationSerializer(serializers.ModelSerializer):
     
-
-# class LoginSerializer(serializers.Serializer):
-#     username = serializers.CharField()
-#     password = serializers.CharField()
-
-class UserSerializer(serializers.ModelSerializer):
+    password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password']
-        extra_kwargs = {'password': {'write_only': True}}
-
+        fields = ['email','name', 'password', 'password2', 'tc']
+        extra_kwargs = {'password': {'write_only': True},}
+        
+    
+    def validate(self, attrs):
+        password = attrs.get('password')
+        password2 = attrs.get('password2')
+        if password != password2:
+            raise serializers.ValidationError("Passwords must match")
+        return attrs
+    
     def create(self, validated_data):
-        validated_data['password'] = make_password(validated_data['password'])
-        return super().create(validated_data)
+        user = User.objects.create_user(**validated_data)
+        return user
 
-class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField(write_only=True)
+
+class UserLoginSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(max_length=200)
+    class Meta:
+        model = User
+        fields = ['email', 'password']
+    
+    
