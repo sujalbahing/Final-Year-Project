@@ -24,13 +24,13 @@
 		4BCA6EDAD06B1BAA6FE823A1 /* libPods-frontend.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CB64D1C159AE57B92FE0841B /* libPods-frontend.a */; };
 		4D7AB6561FB14DDFAA5C47FC /* K2D-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9949A9FB7E2B48F28C84AD4A /* K2D-ExtraBold.ttf */; };
 		511ED3826C5A41879F47BEDE /* K2D-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FC3E1DD820D64681BD082299 /* K2D-SemiBold.ttf */; };
+		534AF8D245484073AEE1569D /* K2D-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F5392CE178BD4305B67F6575 /* K2D-BoldItalic.ttf */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		84151EA15B964D9B93D10CAE /* K2D-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1A428AD225B548EC960F98F4 /* K2D-LightItalic.ttf */; };
 		8457E2685B4C46F6B411FBF0 /* K2D-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9ADEF5560689498FACDDF6CC /* K2D-ThinItalic.ttf */; };
 		A53BCF7A317B4ACDB3274C6C /* K2D-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C23B56019D3444D38DDE1FE4 /* K2D-ExtraLightItalic.ttf */; };
 		C1770B7CE0074FBAB7FCBDB3 /* K2D-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FBE80A55F6DF46D3823FE17B /* K2D-ExtraLight.ttf */; };
 		E6AB699A267B4DFA9E7431D2 /* K2D-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50B692BCF04E4BFD81DB4EF8 /* K2D-MediumItalic.ttf */; };
-		534AF8D245484073AEE1569D /* K2D-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F5392CE178BD4305B67F6575 /* K2D-BoldItalic.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,10 +74,10 @@
 		CE9E98A6C066A0C4B698BF46 /* Pods-frontend-frontendTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-frontend-frontendTests.release.xcconfig"; path = "Target Support Files/Pods-frontend-frontendTests/Pods-frontend-frontendTests.release.xcconfig"; sourceTree = "<group>"; };
 		E5C0591E18C94D8795AFB985 /* K2D-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "K2D-Light.ttf"; path = "../src/fonts/K2D-Light.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F5392CE178BD4305B67F6575 /* K2D-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "K2D-BoldItalic.ttf"; path = "../src/fonts/K2D-BoldItalic.ttf"; sourceTree = "<group>"; };
 		FBE80A55F6DF46D3823FE17B /* K2D-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "K2D-ExtraLight.ttf"; path = "../src/fonts/K2D-ExtraLight.ttf"; sourceTree = "<group>"; };
 		FC3E1DD820D64681BD082299 /* K2D-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "K2D-SemiBold.ttf"; path = "../src/fonts/K2D-SemiBold.ttf"; sourceTree = "<group>"; };
 		FCD13D56E03B47D997E7E5DC /* K2D-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "K2D-ExtraBoldItalic.ttf"; path = "../src/fonts/K2D-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
-		F5392CE178BD4305B67F6575 /* K2D-BoldItalic.ttf */ = {isa = PBXFileReference; name = "K2D-BoldItalic.ttf"; path = "../src/fonts/K2D-BoldItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

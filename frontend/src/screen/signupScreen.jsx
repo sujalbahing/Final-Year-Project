@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import { StyleSheet, View, Image,Text,TextInput, ImageBackground, TouchableOpacity } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -28,19 +29,19 @@ const SignupScreen = () => {
       </View>
       <View style={styles.inputContainer1}>
         <FontAwesome name={'user'} size = {24} color = {'black'} style={styles.inputIcon}/>
-        <TextInput style={styles.textInput} placeholder='Username'/>
+        <TextInput style={styles.textInput} placeholder="Username"/>
       </View>
       <View style={styles.inputContainer3}>
         <MaterialIcons name={'email'} size = {22} color = {'black'} style={styles.inputIcon}/>
-        <TextInput style={styles.textInput} placeholder='Email'/>
+        <TextInput style={styles.textInput} placeholder="Email"/>
       </View>
       <View style={styles.inputContainer2}>
         <Foundation name={'lock'} size = {24} color = {'black'} style={styles.inputIcon}/>
-        <TextInput style={styles.textInput} placeholder='Password' secureTextEntry/> 
+        <TextInput style={styles.textInput} placeholder="Password" secureTextEntry/>
       </View>
       <View style={styles.inputContainer2}>
         <Foundation name={'lock'} size = {24} color = {'black'} style={styles.inputIcon}/>
-        <TextInput style={styles.textInput} placeholder='Confirm Password' secureTextEntry/> 
+        <TextInput style={styles.textInput} placeholder="Confirm Password" secureTextEntry/>
       </View>
       <View style={styles.signUpButtonContainer}>
           <Text style={styles.signUp}>
@@ -49,13 +50,13 @@ const SignupScreen = () => {
       </View>
       <TouchableOpacity onPress={handleRegister}>
       <Text style={styles.footerText}>
-        Already have an account? <Text style={{ textDecorationLine: 'underline', fontWeight: 'bold', color: '#5DDC51'}}>
+        Already have an account? <Text style={{textDecorationLine: 'underline', fontWeight: 'bold', color: '#5DDC51'}}>
           Login
         </Text>
       </Text>
       </TouchableOpacity>
       <View style={styles.footerImageContainer}>
-        <ImageBackground source={require("../assets/bot1.png")} style={styles.footerImage}/>
+        <ImageBackground source={require('../assets/bot1.png')} style={styles.footerImage}/>
       </View>
     </View>
   );
@@ -182,5 +183,4 @@ const styles = StyleSheet.create({
     width: '105%',
     height: '70%',
     position: 'absolute',
-  }
-,});
+  }});

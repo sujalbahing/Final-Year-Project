@@ -1,14 +1,18 @@
-import React from 'react';
+/* eslint-disable react-native/no-inline-styles */
+import React, {useContext, useState} from 'react';
 import { StyleSheet, View, Image,Text,TextInput, ImageBackground, TouchableOpacity } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Foundation from 'react-native-vector-icons/Foundation';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
+import { AuthContext } from '../context/AuthContext';
 
 
 const LoginScreen = () => {
-
+  const {login} = useContext(AuthContext);
   const navigation = useNavigation();
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
 
   const handleRegister = () => {
     // Navigate to Register Screen
@@ -28,16 +32,16 @@ const LoginScreen = () => {
       </View>
       <View style={styles.inputContainer1}>
         <MaterialIcons name={'email'} size = {22} color = {'black'} style={styles.inputIcon}/>
-        <TextInput style={styles.textInput} placeholder='Email'/>
+        <TextInput style={styles.textInput} placeholder="Email" value={email} onChangeText={text => setEmail(text)}/>
       </View>
       <View style={styles.inputContainer2}>
         <Foundation name={'lock'} size = {24} color = {'black'} style={styles.inputIcon}/>
-        <TextInput style={styles.textInput} placeholder='Password' secureTextEntry/> 
+        <TextInput style={styles.textInput} placeholder="Password" secureTextEntry value={password} onChangeText={text => setPassword(text)}/>
       </View>
       <Text style={styles.forgetPasswordText}>
         Forgot Your Password?
       </Text>
-      <View style={styles.logInButtonContainer}>
+      <View style={styles.logInButtonContainer} onPress={() =>{login();}}>
           <Text style={styles.logIn}>
             Login
           </Text>
@@ -60,10 +64,9 @@ const LoginScreen = () => {
       </TouchableOpacity>
       </View>
       <View style={styles.footerImageContainer}>
-        <ImageBackground source={require("../assets/bot2.png")} style={styles.footerImage}/>
+        <ImageBackground source={require('../assets/bot2.png')} style={styles.footerImage}/>
       </View>
     </View>
-    
   );
 };
 
@@ -196,6 +199,5 @@ const styles = StyleSheet.create({
     margin: 10,
     padding: 10,
     borderRadius: 30,
-
   },
 });
