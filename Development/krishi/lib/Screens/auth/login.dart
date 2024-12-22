@@ -82,12 +82,35 @@ class _LoginState extends State<Login> {
               ),
             ),
           ),
-          SizedBox(height: 10.h),
-          ElevatedButton(
-              onPressed: () {
-                login();
-              },
-              child: Text('Login')),
+          SizedBox(height: 15.h),
+          Align(
+            alignment: Alignment.center,
+            child: SizedBox(
+              width: 250.w,
+              child: ElevatedButton(
+                onPressed: () {
+                  login();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[400],
+                  minimumSize: Size(20.w, 51.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  shadowColor: Colors.green[200],
+                  elevation: 5,
+                ),
+                child: const Text(
+                  'Login',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
           SizedBox(height: 10.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -108,7 +131,7 @@ class _LoginState extends State<Login> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey, // Change color for emphasis
+                    color: Color(0xFF5DDC51),
                   ),
                 ),
               ),

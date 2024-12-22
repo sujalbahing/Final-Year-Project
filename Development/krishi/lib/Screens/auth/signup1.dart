@@ -72,7 +72,7 @@ class _SignUpState extends State<SignUp> {
                 child: TextField(
                   controller: usernameController,
                   decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.email, color: Colors.grey),
+                    prefixIcon: Icon(Icons.person_2, color: Colors.grey),
                     hintText: 'User Name',
                     hintStyle: TextStyle(color: Colors.grey, fontSize: 16.sp),
                     border: InputBorder.none,
@@ -171,26 +171,34 @@ class _SignUpState extends State<SignUp> {
               ),
             ),
             SizedBox(height: 52.h),
-            ElevatedButton(
-              onPressed: registerUser,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green[400],
-                minimumSize: Size(200.w, 51.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+            Align(
+            alignment: Alignment.center,
+            child: SizedBox(
+              width: 250.w,
+              child: ElevatedButton(
+                onPressed: () {
+                  registerUser();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[400],
+                  minimumSize: Size(20.w, 51.h),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  shadowColor: Colors.green[200],
+                  elevation: 5,
                 ),
-                shadowColor: Colors.green[200],
-                elevation: 5,
-              ),
-              child: const Text(
-                'Sign Up',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                child: const Text(
+                  'Sign Up',
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
+          ),
             SizedBox(height: 10.h),
             Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -207,11 +215,11 @@ class _SignUpState extends State<SignUp> {
                   );
                 }, // Handle the sign-up tap
                 child: const Text(
-                  "Sign Up",
+                  "Login",
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey, // Change color for emphasis
+                    color: Color(0xFF5DDC51), // Change color for emphasis
                   ),
                 ),
               ),
