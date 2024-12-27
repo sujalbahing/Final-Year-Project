@@ -2,12 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:krishi/Screens/auth/signup1.dart';
+import 'package:krishi/Screens/auth/signup.dart';
 import 'package:krishi/components/custom_button.dart';
 import 'package:krishi/components/custom_textfield.dart';
 import 'package:krishi/utils/api_endpoints.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:krishi/components/app_color.dart';
 
 import '../../model/loginuser.dart';
 import '../mainscreens/home_screen.dart';
@@ -131,7 +132,7 @@ class _LoginState extends State<Login> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF5DDC51),
+                    color: AppColors.primary,
                   ),
                 ),
               ),
@@ -170,7 +171,6 @@ class _LoginState extends State<Login> {
       String accessToken = '';
       final prefs = await SharedPreferences.getInstance();
       final url = Uri.parse('${ApiEndPoints.baseUrl}user/login/');
-      print(url);
       final body = {
         'email': emailController.text,
         'password': passwordController.text,
