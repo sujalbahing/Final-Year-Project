@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:krishi/components/app_color.dart';
+import 'package:krishi/components/images.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -155,6 +156,81 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: List.generate(
+                            imagePaths.length, 
+                            (index) => Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Container(
+                                width: 320,
+                                height: 120,
+                                decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: Colors.red[200], // Background color
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                               child: Stack(
+                                children: [
+                                  Image.asset(
+                                  imagePaths[index],
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                ),
+                                Positioned(
+                                bottom: 10,
+                                left: 10,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Know Best Market\nPrices',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 26,
+                                        fontWeight: FontWeight.bold,
+                                        height: 0.9,
+                                      ),
+                                    ),
+                                    SizedBox(height: 10), // Space between text and button
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        // Define button action here
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.orange, // Button color
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8), // Rounded corners
+                                        ),
+                                        padding: EdgeInsets.symmetric(horizontal: 11),
+                                      ),
+                                      child: Text(
+                                        'View Market',
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white, // Text color
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                                ],
+                               ),
+                              ),
+                              ),)
+                        ),
+                      ),
+                    ),
+          ),
+          SizedBox(height: 10), // Space between sections
+          
         ],
       ),
     );
