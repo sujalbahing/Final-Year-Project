@@ -4,6 +4,10 @@ from rest_framework.views import APIView
 from krishi.serializers import UserRegistrationSerializer, UserLoginSerializer
 from django.contrib.auth import authenticate
 from krishi.renders import UserRenderer
+from django.http import JsonResponse
+import requests
+import csv
+from io import StringIO
 from rest_framework_simplejwt.tokens import RefreshToken
 
 # Generate Token Manually
@@ -71,3 +75,23 @@ class UserLoginView(APIView):
                     status=status.HTTP_404_NOT_FOUND,
                 )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# View Market Price
+def market_price_view(request):
+    api_url = "https://opendatanepal.com/dataset/af321d1f-979b-4780-9f87-790413bd2270/resource/06a18d43-c7ef-42d7-96a7-284671f731bd/download/kalimati_tarkari_dataset_cleaned.csv"
+    try:
+        # Fetch the CSV data
+        response = requests.get(api_url)
+        response.raise_for_status()
+        
+        # Parse the CSV data
+        csv_data = StringIO(response.text)  # Convert the CSV content into a file-like object
+        reader = csv.DictReader(csv_data)  # Parse CSV into a dictionary
+
+        # Convert CSV rows to a list of dictionaries
+        market_data = [row for row in reader]
+    except requests.exceptions.RequestException as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+    return JsonResponse(market_data, safe=False)  # Return parsed data as JSON
