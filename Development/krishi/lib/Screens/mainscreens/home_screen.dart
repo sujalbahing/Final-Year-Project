@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:krishi/components/app_color.dart';
 import 'package:krishi/components/images.dart';
+import 'package:carbon_icons/carbon_icons.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -274,14 +276,20 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               child: Icon(
                                 index == 0
-                                    ? Icons.storefront
+                                    ? CarbonIcons.shopping_cart 
                                     : index == 1
-                                        ? Icons.agriculture
+                                        ? CarbonIcons.agriculture_analytics
                                         : index == 2
-                                            ? Icons.calculate
-                                            : Icons.question_answer,
-                                color: Colors.black,
+                                            ? CarbonIcons.calculator
+                                            : CarbonIcons.data_1,
                                 size: 30,
+                                color: index == 0
+                                  ? Colors.red            // Color for shopping_cart
+                                  : index == 1
+                                      ? Colors.green      // Color for agriculture_analytics
+                                      : index == 2
+                                          ? Colors.blue    // Color for calculator
+                                          : Colors.orange,  // Color for data_1
                               ),
                             ),
                             SizedBox(height: 10),
@@ -336,15 +344,73 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: Colors.white, // Box color
                             borderRadius: BorderRadius.circular(10), // Rounded corners
                           ),
-                          child: Center(
-                            child: Text(
-                              'Market Price ${index + 1}', // Different text for each item
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                          child: Row(
+                            children: [
+                              Padding(padding: EdgeInsets.only(left: 20),
+                              child: Image.asset(
+                                'assets/veg1.jpg',
+                                width: 50,
+                                height: 50,
+                              ),),
+                              Padding(padding: EdgeInsets.all(8),
+                              child: Text(
+                                'Spanish',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
+                              ),
+                              Padding(padding: EdgeInsets.only(left: 100),
+                              child: Text(
+                                'Rs',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              ),
+                              Padding(padding: EdgeInsets.only(left: 10),
+                              child: Text(
+                                '130',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              ),
+                              Padding(padding: EdgeInsets.only(left:0),
+                              child: Text(
+                                '/',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              ),
+                              Padding(padding: EdgeInsets.only(left:0),
+                              child: Text(
+                                'kg',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Icon(
+                                  FontAwesomeIcons.arrowUp,
+                                  color: Colors.green,  // Color of the additional icon
+                                  size: 20,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
