@@ -4,6 +4,10 @@ import 'package:krishi/components/app_color.dart';
 import 'package:krishi/components/images.dart';
 import 'package:carbon_icons/carbon_icons.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:krishi/model/market_price.dart'; 
+import 'package:http/http.dart' as http; 
+import 'dart:convert';
+import 'package:krishi/utils/api_endpoints.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,6 +17,44 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  List<MarketPrice> marketPrices = []; // Store fetched market data
+  bool isLoading = true; // Show a loading indicator
+
+  @override
+  void initState() {
+    super.initState();
+    fetchMarketPrices(); // Fetch market prices on screen load
+  }
+
+  Future<void> fetchMarketPrices() async {
+    try {
+      final url = Uri.parse(ApiEndPoints.marketPriceUrl); // ✅ Use API Endpoint
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        List<dynamic> data = jsonDecode(response.body);
+        setState(() {
+          marketPrices = data.take(10).map((json) => MarketPrice.fromJson(json)).toList();
+          isLoading = false;
+        });
+      } else {
+        throw Exception("Failed to load market prices");
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error fetching market prices: $e"),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      print("Error: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -317,7 +359,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             // Market Prices Section
             Padding(
-              padding: const EdgeInsets.only(left: 16, top:12),
+              padding: const EdgeInsets.only(left: 16, top:12,),
               child: Text(
                 "Market Prices",
                 style: TextStyle(
@@ -328,97 +370,108 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 15, right: 15),
-              child: Expanded( 
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Column(
-                    children: List.generate(
-                      10,
-                      (index) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Container(
-                          width: double.infinity,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.white, // Box color
-                            borderRadius: BorderRadius.circular(10), // Rounded corners
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: isLoading
+                ? Center(child: CircularProgressIndicator()) // Show loading indicator
+                : marketPrices.isEmpty
+                    ? Center(child: Text("No market data available")) // Show if no data
+                    : Expanded(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: BouncingScrollPhysics(), // Smooth scrolling effect
+                          itemCount: marketPrices.length > 10 ? 10 : marketPrices.length,
+                          itemBuilder: (context, index) {
+                            final market = marketPrices[index];
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Container(
+                      width: double.infinity,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: [
+                          // Vegetable Image (Placeholder)
+                          Padding(
+                            padding: EdgeInsets.only(left: 20),
+                            child: Image.asset(
+                              'assets/veg2.jpg', // Replace with actual images
+                              width: 50,
+                              height: 50,
+                            ),
                           ),
-                          child: Row(
-                            children: [
-                              Padding(padding: EdgeInsets.only(left: 20),
-                              child: Image.asset(
-                                'assets/veg1.jpg',
-                                width: 50,
-                                height: 50,
-                              ),),
-                              Padding(padding: EdgeInsets.all(8),
-                              child: Text(
-                                'Spanish',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
+                          
+                          // Commodity Name
+                          Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Text(
+                              market.commodity, // Fetching from API
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
                               ),
-                              ),
-                              Padding(padding: EdgeInsets.only(left: 100),
-                              child: Text(
-                                'Rs',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              ),
-                              Padding(padding: EdgeInsets.only(left: 10),
-                              child: Text(
-                                '130',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              ),
-                              Padding(padding: EdgeInsets.only(left:0),
-                              child: Text(
-                                '/',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              ),
-                              Padding(padding: EdgeInsets.only(left:0),
-                              child: Text(
-                                'kg',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Icon(
-                                  FontAwesomeIcons.arrowUp,
-                                  color: Colors.green,  // Color of the additional icon
-                                  size: 20,
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
+
+                          // Spacer to push price to right
+                          Spacer(),
+
+                          // Price
+                          Padding(
+                            padding: EdgeInsets.only(right: 10),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Rs', // Static text
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                SizedBox(width: 5),
+                                Text(
+                                  market.price, // Fetching from API
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                SizedBox(width: 5),
+                                Text(
+                                  '/${market.unit}', // Fetching from API
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // Arrow Up/Down Indicator (Can be updated dynamically)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(
+                              FontAwesomeIcons.arrowUp,
+                              color: Colors.green, // Change dynamically if needed
+                              size: 20,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
             ),
+           ),
           ],
         ),
       ),

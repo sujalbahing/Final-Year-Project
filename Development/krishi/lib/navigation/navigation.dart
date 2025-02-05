@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:krishi/Screens/mainscreens/home_screen.dart';
 
 class NavigationScreen extends StatefulWidget {
   @override
@@ -10,9 +11,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   // List of pages
   final List<Widget> _pages = [
-    HomePage(),
-    SearchPage(),
-    ProfilePage(),
+    HomeScreen(),
   ];
 
   // Handle navigation
@@ -38,47 +37,22 @@ class _NavigationScreenState extends State<NavigationScreen> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
+            icon: Icon(Icons.storefront),
+            label: 'Market',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: 'Shop',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
           ),
         ],
-        selectedItemColor: Colors.blue, // Selected item color
+        selectedItemColor: Colors.green, // Selected item color
         unselectedItemColor: Colors.grey, // Unselected item color
       ),
     );
   }
 }
-
-// Sample pages
-class HomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Home Page'),
-    );
-  }
-}
-
-class SearchPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Search Page'),
-    );
-  }
-}
-
-class ProfilePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Profile Page'),
-    );
-  }
-}
-
 

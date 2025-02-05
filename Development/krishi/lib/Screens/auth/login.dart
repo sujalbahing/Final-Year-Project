@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:krishi/Screens/auth/signup.dart';
-import 'package:krishi/components/custom_button.dart';
 import 'package:krishi/components/custom_textfield.dart';
 import 'package:krishi/utils/api_endpoints.dart';
 import 'package:http/http.dart' as http;
@@ -11,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:krishi/components/app_color.dart';
 
 import '../../model/loginuser.dart';
-import '../mainscreens/home_screen.dart';
+import 'package:krishi/navigation/navigation.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -21,6 +20,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -138,22 +138,7 @@ class _LoginState extends State<Login> {
               ),
             ],
           ),
-          SizedBox(height: 10.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // IconButton(
-              //   icon: Icon(FontAwesome.facebook_square, size: 30, color: Color(0xFF3D5A98)),
-              //   onPressed: () {},
-              // ),
-              // SizedBox(width: 20),
-              // IconButton(
-              //   icon: Icon(FontAwesome.google, size: 30, color: Colors.red),
-              //   onPressed: () {},
-              // ),
-            ],
-          ),
-          SizedBox(height: 3.h),
+          SizedBox(height: 14.4.h),
           Image.asset(
             'assets/bot1.png',
             width: double.infinity,
@@ -166,33 +151,56 @@ class _LoginState extends State<Login> {
   }
 
   Future<void> login() async {
-    try {
-      // TODO: Implement login logic here
-      String accessToken = '';
-      final prefs = await SharedPreferences.getInstance();
-      final url = Uri.parse('${ApiEndPoints.baseUrl}user/login/');
-      final body = {
-        'email': emailController.text,
-        'password': passwordController.text,
-      };
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final url = Uri.parse('${ApiEndPoints.baseUrl}user/login/');
+    final body = {
+      'email': emailController.text,
+      'password': passwordController.text,
+    };
 
-      final response = await http.post(url,
-          body: json.encode(body),
-          headers: {"Content-Type": "application/json"});
+    final response = await http.post(url,
+        body: json.encode(body),
+        headers: {"Content-Type": "application/json"});
 
-      if (response.statusCode == 200) {
-        final responseData = LoginUser.fromJson(jsonDecode(response.body));
-        accessToken = responseData.token.access;
-        prefs.setString('token', accessToken);
+    if (response.statusCode == 200) {
+      final responseData = LoginUser.fromJson(jsonDecode(response.body));
+      final accessToken = responseData.token.access;
+      prefs.setString('token', accessToken);
 
-        // Navigate to the home screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
+      // Navigate to the home screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => NavigationScreen()),
+      );
+    } else {
+      // Decode response body
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+
+      // Extract error message
+      String errorMessage = "Login failed. Please try again.";
+      if (responseData.containsKey("errors") &&
+          responseData["errors"].containsKey("non_field_errors")) {
+        errorMessage = responseData["errors"]["non_field_errors"][0];
       }
-    } catch (e) {
-      print(e);
+
+      // Show error message in Snackbar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
+        ),
+      );
     }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Something went wrong. Please try again."),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
+}
 }
