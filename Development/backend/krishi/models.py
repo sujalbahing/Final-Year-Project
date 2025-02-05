@@ -67,4 +67,13 @@ class User(AbstractBaseUser):
         return self.is_admin
 
 
-# View Market Price
+# MarketPrice
+
+class MarketPrice(models.Model):
+    item_name = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    unit = models.CharField(max_length=50)  # Example: "kg", "liters"
+    date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return self.item_name

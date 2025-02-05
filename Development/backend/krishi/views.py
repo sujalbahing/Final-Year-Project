@@ -77,21 +77,25 @@ class UserLoginView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# View Market Price
-def market_price_view(request):
-    api_url = "https://opendatanepal.com/dataset/af321d1f-979b-4780-9f87-790413bd2270/resource/06a18d43-c7ef-42d7-96a7-284671f731bd/download/kalimati_tarkari_dataset_cleaned.csv"
-    try:
-        # Fetch the CSV data
-        response = requests.get(api_url)
-        response.raise_for_status()
+class MarketPriceView(APIView):
+    def get(self, request):
+        api_url = "https://opendatanepal.com/dataset/af321d1f-979b-4780-9f87-790413bd2270/resource/06a18d43-c7ef-42d7-96a7-284671f731bd/download/kalimati_tarkari_dataset_cleaned.csv"
         
-        # Parse the CSV data
-        csv_data = StringIO(response.text)  # Convert the CSV content into a file-like object
-        reader = csv.DictReader(csv_data)  # Parse CSV into a dictionary
+        try:
+            # Fetch the CSV data
+            response = requests.get(api_url)
+            response.raise_for_status()  # Raise an error for bad responses (4xx, 5xx)
 
-        # Convert CSV rows to a list of dictionaries
-        market_data = [row for row in reader]
-    except requests.exceptions.RequestException as e:
-        return JsonResponse({"error": str(e)}, status=500)
+            # Convert CSV text into a file-like object
+            csv_data = StringIO(response.text)
+            reader = csv.DictReader(csv_data)
 
-    return JsonResponse(market_data, safe=False)  # Return parsed data as JSON
+            # Convert CSV rows into a list of dictionaries
+            market_data = [row for row in reader]
+            
+            return Response(market_data, status=status.HTTP_200_OK)
+        
+        except requests.exceptions.RequestException as e:
+            return Response({"error": f"Failed to fetch market price data: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except csv.Error as e:
+            return Response({"error": f"CSV parsing error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

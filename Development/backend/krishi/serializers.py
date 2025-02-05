@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from krishi.models import User
+from .models import MarketPrice
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -29,4 +30,12 @@ class UserLoginSerializer(serializers.ModelSerializer):
         model = User
         fields = ['email', 'password']
     
-    
+
+
+
+# MarketPrice
+
+class MarketPriceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MarketPrice
+        fields = ['item_name', 'price', 'unit', 'date']
