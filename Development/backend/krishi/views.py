@@ -99,3 +99,32 @@ class MarketPriceView(APIView):
             return Response({"error": f"Failed to fetch market price data: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except csv.Error as e:
             return Response({"error": f"CSV parsing error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+class WeatherAPIView(APIView):
+    def get(self, request):
+        city = request.query_params.get("city", "Kathmandu")  # Default city is Kathmandu
+        api_key = "f5131087005445fd17663c90fc3dc391"  # Replace with your OpenWeatherMap API key
+        weather_api_url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
+
+        try:
+            # Fetch data from OpenWeatherMap API
+            response = requests.get(weather_api_url)
+            response.raise_for_status()  # Raise an error for HTTP errors
+            weather_data = response.json()
+
+            # Extract relevant information
+            formatted_data = {
+                "location": weather_data["name"],  # City name
+                "temperature": weather_data["main"]["temp"],  # Current temperature
+                "high": weather_data["main"]["temp_max"],  # Maximum temperature
+                "low": weather_data["main"]["temp_min"],  # Minimum temperature
+                "weather": weather_data["weather"][0]["description"],  # Weather description
+            }
+
+            return Response(formatted_data, status=status.HTTP_200_OK)
+
+        except requests.exceptions.RequestException as e:
+            return Response({"error": f"Failed to fetch weather data: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except KeyError as e:
+            return Response({"error": f"Missing data field: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

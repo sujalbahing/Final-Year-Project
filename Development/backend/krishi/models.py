@@ -77,3 +77,17 @@ class MarketPrice(models.Model):
 
     def __str__(self):
         return self.item_name
+
+
+# Weather
+
+class Weather(models.Model):
+    location = models.CharField(max_length=100)
+    temperature = models.FloatField()
+    high = models.FloatField()
+    low = models.FloatField()
+    weather = models.CharField(max_length=100)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.location} - {self.weather} ({self.temperature}°C)"
