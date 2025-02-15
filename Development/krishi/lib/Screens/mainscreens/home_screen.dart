@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     futureMarketPrices = fetchMarketPrices();
-    futureWeatherData = fetchWeatherData("Dharan");
+    futureWeatherData = fetchWeatherData("Kathmandu");
   }
   
 
@@ -60,66 +60,70 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backPrimary,
-      body: Stack(
-        clipBehavior: Clip.none, // Allows content to overflow (for overlap)
-        children: [
-          // Header Section (Background)
-          _buildHeaderSection(),
+  return Scaffold(
+    backgroundColor: AppColors.backPrimary,
+    body: FutureBuilder<Map<String, dynamic>>(
+      future: futureWeatherData,
+      builder: (context, snapshot) {
+        Map<String, dynamic>? weatherData;  // Default: null
 
-          // Horizontal Scroll Section (Overlapping)
-          Positioned(
-            left: 0,
-            right: 0,
-            top: 200.h, // Adjust this value to fine-tune overlap
-            child: _buildHorizontalScrollSection(),
-          ),
+        if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+          weatherData = snapshot.data!;
+        }
 
-          // Other sections - Keeping _buildCategorySection() fixed
-          Padding(
-            padding: EdgeInsets.only(top: 355.h), // Ensures proper spacing below the overlap
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildCategorySection(), // ✅ Fixed, will not scroll
-                
-                // ✅ Wrap only _buildMarketPriceSection() in SingleChildScrollView
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildMarketPriceSection(),
-                        SizedBox(height: 10), // Bottom padding for spacing
-                      ],
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            _buildHeaderSection(weatherData),  // ✅ Pass weather data or null
+            Positioned(
+              left: 0,
+              right: 0,
+              top: 200.h,
+              child: _buildHorizontalScrollSection(),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 355.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildCategorySection(),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildMarketPriceSection(),
+                          SizedBox(height: 10),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
+          ],
+        );
+      },
+    ),
+  );
+}
 
-  Widget _buildHeaderSection() {
-    return Container(
-      height: 270.h,
-      color: AppColors.primary,
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _buildHeaderRow(),
-          SizedBox(height: 15.h),
-          _buildWeatherInfoCard(),
-        ],
-      ),
-    );
-  }
+  Widget _buildHeaderSection(Map<String, dynamic>? weather) {
+  return Container(
+    height: 270.h,
+    color: AppColors.primary,
+    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildHeaderRow(),
+        SizedBox(height: 15.h),
+        _buildWeatherInfoCard(weather),  // ✅ Pass null if weather data is missing
+      ],
+    ),
+  );
+}
 
   Widget _buildHeaderRow() {
     return Padding(
@@ -137,41 +141,60 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildWeatherInfoCard() {
+  Widget _buildWeatherInfoCard(Map<String, dynamic>? weather) {
+  if (weather == null) {
     return Container(
       height: 70.h,
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 25),
-      child: Row(
-        children: [
-          _buildTemperatureColumn(),
-          const VerticalDivider(color: Colors.grey, thickness: 1),
-          _buildWeatherIcon(),
-          _buildLocationInfo(),
-        ],
+      child: Center(
+        child: Text(
+          "No weather data available",
+          style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+        ),
       ),
     );
   }
+  return Container(
+    height: 70.h,
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(10),
+    ),
+    padding: const EdgeInsets.symmetric(horizontal: 25),
+    child: Row(
+      children: [
+        _buildTemperatureColumn(weather),
+        const VerticalDivider(color: Colors.grey, thickness: 1),
+        _buildWeatherIcon(weather),
+        _buildLocationInfo(weather),
+      ],
+    ),
+  );
+}
 
-  Widget _buildTemperatureColumn() {
+  Widget _buildTemperatureColumn(Map<String, dynamic> weather) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      SizedBox(height: 3,),
+      SizedBox(height: 3),
       Text(
-        "26°C",
+        "${weather['temperature'].toInt()}°C",  // ✅ Remove decimals
         style: TextStyle(fontSize: 26.sp, fontWeight: FontWeight.bold),
       ),
-      SizedBox(height: 3), // Adjust spacing between temperature and High/Low row
+      SizedBox(height: 3),
       Row(
         children: [
           Text(
-            "High 32°C",
+            "High ${weather['high'].toInt()}°C",  // ✅ Remove decimals
             style: TextStyle(fontSize: 14.sp, color: Colors.grey),
           ),
-          SizedBox(width: 10), // Adds spacing between "High 32°C" and "Low 18°C"
+          SizedBox(width: 10),
           Text(
-            "Low 18°C",
+            "Low ${weather['low'].toInt()}°C",  // ✅ Remove decimals
             style: TextStyle(fontSize: 14.sp, color: Colors.grey),
           ),
         ],
@@ -180,24 +203,55 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 }
 
-  Widget _buildWeatherIcon() {
+  Widget _buildWeatherIcon(Map<String, dynamic> weather) {
+    IconData weatherIcon;
+
+    switch (weather['weather'].toLowerCase()) {
+      case "clear sky":
+        weatherIcon = Icons.wb_sunny;
+        break;
+      case "few clouds":
+      case "scattered clouds":
+        weatherIcon = Icons.cloud;
+        break;
+      case "rain":
+      case "light rain":
+        weatherIcon = Icons.beach_access;
+        break;
+      case "thunderstorm":
+        weatherIcon = Icons.flash_on;
+        break;
+      case "snow":
+        weatherIcon = Icons.ac_unit;
+        break;
+      default:
+        weatherIcon = Icons.cloud_queue;
+    }
+
     return Padding(
-      padding: const EdgeInsets.only(left: 18.0),
-      child: Icon(Icons.wb_sunny, color: AppColors.textPrimary, size: 34),
+      padding: const EdgeInsets.only(left: 12.0),
+      child: Icon(weatherIcon, color: AppColors.textPrimary, size: 34),
     );
   }
 
-  Widget _buildLocationInfo() {
+  Widget _buildLocationInfo(Map<String, dynamic> weather) {
     return Padding(
       padding: const EdgeInsets.only(left: 10.0, top: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: const [Icon(Icons.location_on, size: 20), SizedBox(width: 5), Text("Dharan")]),
-          const SizedBox(height: 3),
-          Text(
-            "Sunny weather",
-            style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+          Row(children: [
+            Icon(Icons.location_on, size: 20),
+            SizedBox(width: 5),
+            Text(weather['location']),
+          ]),
+          SizedBox(height: 3),
+          Padding(
+            padding: const EdgeInsets.only(left: 23),
+            child: Text(
+              weather['weather'],
+              style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+            ),
           ),
         ],
       ),
@@ -374,7 +428,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           // Image Placeholder
           Image.asset(
-            'assets/veg1.jpg', // Replace with actual images
+            'assets/veg2.jpg', // Replace with actual images
             width: 50,
             height: 50,
           ),

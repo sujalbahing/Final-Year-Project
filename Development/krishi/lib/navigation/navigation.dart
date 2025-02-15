@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:krishi/Screens/mainscreens/home_screen.dart';
+import 'package:krishi/Screens/mainscreens/profile_screen.dart';
 
 class NavigationScreen extends StatefulWidget {
   @override
@@ -9,12 +10,14 @@ class NavigationScreen extends StatefulWidget {
 class _NavigationScreenState extends State<NavigationScreen> {
   int _selectedIndex = 0;
 
-  // List of pages
+  // ✅ Ensure there are 4 screens to match 4 navigation items
   final List<Widget> _pages = [
     HomeScreen(),
+    PlaceholderScreen(title: "Market"),  // Temporary placeholder screen
+    PlaceholderScreen(title: "Shop"),    // Temporary placeholder screen
+    ProfileScreen(),
   ];
 
-  // Handle navigation
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -49,10 +52,23 @@ class _NavigationScreenState extends State<NavigationScreen> {
             label: 'Profile',
           ),
         ],
-        selectedItemColor: Colors.green, // Selected item color
-        unselectedItemColor: Colors.grey, // Unselected item color
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
       ),
     );
   }
 }
 
+// ✅ Temporary Placeholder Screen to prevent crashes
+class PlaceholderScreen extends StatelessWidget {
+  final String title;
+  const PlaceholderScreen({Key? key, required this.title}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(title)),
+      body: Center(child: Text("$title Page Coming Soon!")),
+    );
+  }
+}
