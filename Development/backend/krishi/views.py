@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from krishi.serializers import UserRegistrationSerializer, UserLoginSerializer
+from krishi.serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer
 from django.contrib.auth import authenticate
 from krishi.renders import UserRenderer
 from django.http import JsonResponse
@@ -9,6 +9,7 @@ import requests
 import csv
 from io import StringIO
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated
 
 # Generate Token Manually
 def get_tokens_for_user(user):
@@ -75,6 +76,25 @@ class UserLoginView(APIView):
                     status=status.HTTP_404_NOT_FOUND,
                 )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data.get("refresh")  # Get refresh token
+            if not refresh_token:
+                return Response({"error": "Refresh token is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+            token = RefreshToken(refresh_token)
+            token.blacklist()  # Blacklist the refresh token
+
+            return Response({"message": "Logout successful"}, status=status.HTTP_205_RESET_CONTENT)
+
+        except Exception as e:
+            return Response({"error": f"Logout failed: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+        
 
 
 class MarketPriceView(APIView):
@@ -128,3 +148,12 @@ class WeatherAPIView(APIView):
             return Response({"error": f"Failed to fetch weather data: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         except KeyError as e:
             return Response({"error": f"Missing data field: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user  # Get the logged-in user
+        serializer = UserProfileSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)

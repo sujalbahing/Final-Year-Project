@@ -2,7 +2,7 @@ from rest_framework import serializers
 from krishi.models import User
 from .models import MarketPrice, Weather
 
-
+#Registration
 class UserRegistrationSerializer(serializers.ModelSerializer):
     
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
@@ -23,7 +23,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**validated_data)
         return user
 
-
+#Login
 class UserLoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=200)
     class Meta:
@@ -32,15 +32,19 @@ class UserLoginSerializer(serializers.ModelSerializer):
     
 
 #Weather
-
 class WeatherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Weather
         fields = ['location', 'temperature', 'high', 'low', 'weather', 'date']
 
 # MarketPrice
-
 class MarketPriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = MarketPrice
         fields = ['item_name', 'price', 'unit', 'date']
+
+# UserProfile   
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['name', 'email']
