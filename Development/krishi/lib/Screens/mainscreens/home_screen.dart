@@ -8,6 +8,7 @@ import 'package:krishi/model/market_price.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:krishi/utils/api_endpoints.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,12 +20,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Future<List<MarketPrice>>? futureMarketPrices;
   Future<Map<String, dynamic>>? futureWeatherData;
+  String userName = "Loading..."; // ✅ State variable to store the user's name
+
 
   @override
   void initState() {
     super.initState();
     futureMarketPrices = fetchMarketPrices();
     futureWeatherData = fetchWeatherData("Kathmandu");
+    fetchUserName(); // ✅ Fetch the logged-in user's name
   }
   
 
@@ -55,6 +59,44 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     } catch (e) {
       throw Exception("Error fetching weather data: $e");
+    }
+  }
+
+  /// **Fetch Logged-in User's Name**
+  Future<void> fetchUserName() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('access_token');
+
+      if (token == null) {
+        setState(() {
+          userName = "Guest"; // ✅ Show Guest if no token found
+        });
+        return;
+      }
+
+      final response = await http.get(
+        Uri.parse('${ApiEndPoints.baseUrl}user/profile/'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          userName = data['name'] ?? "User"; // ✅ Update UI with fetched name
+        });
+      } else {
+        setState(() {
+          userName = "User"; // Default fallback
+        });
+      }
+    } catch (e) {
+      setState(() {
+        userName = "Error";
+      });
     }
   }
 
@@ -106,25 +148,27 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     ),
   );
-}
+ }
 
+  /// ✅ **Updated Header Section with Dynamic User Name**
   Widget _buildHeaderSection(Map<String, dynamic>? weather) {
-  return Container(
-    height: 270.h,
-    color: AppColors.primary,
-    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _buildHeaderRow(),
-        SizedBox(height: 15.h),
-        _buildWeatherInfoCard(weather),  // ✅ Pass null if weather data is missing
-      ],
-    ),
-  );
-}
+    return Container(
+      height: 270.h,
+      color: AppColors.primary,
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildHeaderRow(),
+          SizedBox(height: 15.h),
+          _buildWeatherInfoCard(weather), // ✅ Pass null if weather data is missing
+        ],
+      ),
+    );
+  }
 
+  /// ✅ **Updated Header Row to Show Dynamic User Name**
   Widget _buildHeaderRow() {
     return Padding(
       padding: EdgeInsets.only(top: 5.h),
@@ -132,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "Hello, Sujal",
+            "Hello, $userName", // ✅ Now dynamically shows the logged-in user's name
             style: TextStyle(fontSize: 32.sp, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           const Icon(Icons.notifications, color: Colors.white, size: 35),
@@ -140,6 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
 
   Widget _buildWeatherInfoCard(Map<String, dynamic>? weather) {
   if (weather == null) {
@@ -247,7 +292,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ]),
           SizedBox(height: 3),
           Padding(
-            padding: const EdgeInsets.only(left: 23),
+            padding: const EdgeInsets.only(left: 4),
             child: Text(
               weather['weather'],
               style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.bold, color: AppColors.textPrimary),

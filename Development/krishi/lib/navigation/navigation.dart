@@ -14,7 +14,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
   final List<Widget> _pages = [
     HomeScreen(),
     PlaceholderScreen(title: "Market"),  // Temporary placeholder screen
-    PlaceholderScreen(title: "Shop"),    // Temporary placeholder screen
+    PlaceholderScreen(title: "Shop"), 
+    PlaceholderScreen(title: "Chat"),   // Temporary placeholder screen
     ProfileScreen(),
   ];
 
@@ -46,6 +47,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),
             label: 'Shop',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: 'Chat',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

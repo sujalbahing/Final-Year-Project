@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:krishi/Screens/auth/signup.dart';
@@ -8,7 +7,6 @@ import 'package:krishi/utils/api_endpoints.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:krishi/components/app_color.dart';
-
 import '../../model/loginuser.dart';
 import 'package:krishi/navigation/navigation.dart';
 
@@ -20,14 +18,9 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  bool isLoading = false; // Added loading state
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +57,8 @@ class _LoginState extends State<Login> {
                 CustomTextField(
                     controller: passwordController,
                     hintText: "Password",
-                    icon: Icons.lock),
+                    icon: Icons.lock,
+                    obscureText: true),
               ],
             ),
           ),
@@ -72,8 +66,7 @@ class _LoginState extends State<Login> {
           Align(
             alignment: Alignment.centerRight,
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: 45.w, vertical: 10.h), // Adjust padding as needed
+              padding: EdgeInsets.symmetric(horizontal: 45.w, vertical: 10.h),
               child: Text(
                 'Forgot Your Password?',
                 style: TextStyle(
@@ -89,9 +82,7 @@ class _LoginState extends State<Login> {
             child: SizedBox(
               width: 250.w,
               child: ElevatedButton(
-                onPressed: () {
-                  login();
-                },
+                onPressed: isLoading ? null : () => login(),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green[400],
                   minimumSize: Size(20.w, 51.h),
@@ -101,14 +92,16 @@ class _LoginState extends State<Login> {
                   shadowColor: Colors.green[200],
                   elevation: 5,
                 ),
-                child: const Text(
-                  'Login',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: isLoading
+                    ? CircularProgressIndicator(color: Colors.white)
+                    : const Text(
+                        'Login',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
               ),
             ),
           ),
@@ -126,7 +119,7 @@ class _LoginState extends State<Login> {
                     context,
                     MaterialPageRoute(builder: (context) => const SignUp()),
                   );
-                }, // Handle the sign-up tap
+                },
                 child: const Text(
                   "Sign Up",
                   style: TextStyle(
@@ -150,57 +143,94 @@ class _LoginState extends State<Login> {
     );
   }
 
+  /// **Handles user login**
   Future<void> login() async {
-  try {
-    final prefs = await SharedPreferences.getInstance();
-    final url = Uri.parse('${ApiEndPoints.baseUrl}user/login/');
-    final body = {
-      'email': emailController.text,
-      'password': passwordController.text,
-    };
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+      _showErrorSnackbar("Please enter both email and password.");
+      return;
+    }
 
-    final response = await http.post(url,
-        body: json.encode(body),
-        headers: {"Content-Type": "application/json"});
+    setState(() {
+      isLoading = true;
+    });
 
-    if (response.statusCode == 200) {
-      final responseData = LoginUser.fromJson(jsonDecode(response.body));
-      final accessToken = responseData.token.access;
-      prefs.setString('token', accessToken);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final url = Uri.parse('${ApiEndPoints.baseUrl}user/login/');
 
-      // Navigate to the home screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => NavigationScreen()),
+      final body = jsonEncode({
+        'email': emailController.text.trim(),
+        'password': passwordController.text.trim(),
+      });
+
+      final response = await http.post(
+        url,
+        body: body,
+        headers: {"Content-Type": "application/json"},
       );
-    } else {
-      // Decode response body
-      final Map<String, dynamic> responseData = jsonDecode(response.body);
 
-      // Extract error message
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        
+        if (responseData.containsKey("token")) {
+          final loginUser = LoginUser.fromJson(responseData);
+          final accessToken = loginUser.token.access;
+
+          await saveToken(accessToken); // Save the token
+
+          // Navigate to Home Screen
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => NavigationScreen()),
+          );
+        } else {
+          _showErrorSnackbar("Invalid response from server.");
+        }
+      } else {
+        _handleErrorResponse(response);
+      }
+    } catch (e) {
+      _showErrorSnackbar("Something went wrong. Please try again.");
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  /// **Function to save access token**
+  Future<void> saveToken(String accessToken) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('access_token', accessToken);
+    print("Token saved successfully.");
+  }
+
+  /// **Handles failed login response**
+  void _handleErrorResponse(http.Response response) {
+    try {
+      final responseData = jsonDecode(response.body);
       String errorMessage = "Login failed. Please try again.";
-      if (responseData.containsKey("errors") &&
-          responseData["errors"].containsKey("non_field_errors")) {
-        errorMessage = responseData["errors"]["non_field_errors"][0];
+
+      if (responseData.containsKey("errors")) {
+        if (responseData["errors"].containsKey("non_field_errors")) {
+          errorMessage = responseData["errors"]["non_field_errors"][0];
+        }
       }
 
-      // Show error message in Snackbar
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errorMessage),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 3),
-        ),
-      );
+      _showErrorSnackbar(errorMessage);
+    } catch (e) {
+      _showErrorSnackbar("Invalid response from server.");
     }
-  } catch (e) {
+  }
+
+  /// **Displays an error message in a Snackbar**
+  void _showErrorSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text("Something went wrong. Please try again."),
+        content: Text(message),
         backgroundColor: Colors.red,
         duration: Duration(seconds: 3),
       ),
     );
   }
-}
 }
