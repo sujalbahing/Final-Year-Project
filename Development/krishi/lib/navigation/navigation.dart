@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:krishi/Screens/mainscreens/chat_screen.dart';
 import 'package:krishi/Screens/mainscreens/home_screen.dart';
+import 'package:krishi/Screens/mainscreens/marketplace_screen.dart';
 import 'package:krishi/Screens/mainscreens/profile_screen.dart';
+import 'package:krishi/Screens/mainscreens/shopping_screen.dart';
 
 class NavigationScreen extends StatefulWidget {
   @override
@@ -13,9 +16,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
   // ✅ Ensure there are 4 screens to match 4 navigation items
   final List<Widget> _pages = [
     HomeScreen(),
-    PlaceholderScreen(title: "Market"),  // Temporary placeholder screen
-    PlaceholderScreen(title: "Shop"), 
-    PlaceholderScreen(title: "Chat"),   // Temporary placeholder screen
+    MarketplaceScreen(),
+    ShoppingScreen(),
+    // ChatScreen(chatRoomName: "room123"),
     ProfileScreen(),
   ];
 
@@ -48,10 +51,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
             icon: Icon(Icons.shopping_cart),
             label: 'Shop',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chat',
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.chat),
+          //   label: 'Chat',
+          // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
