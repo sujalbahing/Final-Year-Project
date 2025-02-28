@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-cjmk6o%*y!023(v^orzix#ba_xw))=l9xs#360u7z(9cqw3nki
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','192.168.1.100','localhost']
+ALLOWED_HOSTS = ['127.0.0.1','192.168.1.100','localhost','6905-2400-9500-c020-df85-2059-8678-d0a5-dc5d.ngrok-free.app']
 
 
 # Application definition
@@ -45,7 +45,9 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'krishi',
-    
+    'chat',
+    'payment',
+    'channels',
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -91,8 +93,12 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+       'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'Krishi',
+        'PORT': '3306',
+        'HOST': 'localhost',
+        'USER': 'root',
+        'PASSWORD': '',
     }
 }
 
@@ -163,3 +169,22 @@ SIMPLE_JWT = {
 
     "JTI_CLAIM": "jti",
 }
+
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",  # For testing
+        # Use Redis in production
+        # "BACKEND": "channels_redis.core.RedisChannelLayer",
+        # "CONFIG": {
+        #     "hosts": [("127.0.0.1", 6379)],
+        # },
+    },
+}
+
+
+# eSewa Configuration
+ESEWA_MERCHANT_ID = "YOUR_ESEWA_MERCHANT_ID"
+ESEWA_SUCCESS_URL = "http://127.0.0.1:8000/api/payment/esewa-success/"
+ESEWA_FAILURE_URL = "http://127.0.0.1:8000/api/payment/esewa-failure/"
+ESEWA_VERIFICATION_API = "https://uat.esewa.com.np/epay/transrec"
